@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="逐句提示词阅读器 - 粘贴文本，一句一句显示，支持语音识别自动翻页，适合手机台词提词" />
+  <meta name="theme-color" content="#4a90e2" />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="提词器" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" href="icons/icon-192.png" />
+
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./style.css" />
+  <title>逐句提示词阅读器</title>
+</head>
+<body>
+
+  <!-- ===== 顶部导航 ===== -->
+  <header class="app-header">
+    <span class="app-title">📋 提词器</span>
+    <div class="header-actions">
+      <!-- 编辑/收起按钮 -->
+      <button
+        id="edit-toggle-btn"
+        class="btn btn-icon"
+        aria-label="编辑提示词"
+        aria-expanded="false"
+        title="编辑提示词"
+      >✏️</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ===== 编辑面板（默认隐藏） ===== -->
+    <section id="edit-panel" aria-label="编辑提示词">
+      <label class="edit-label" for="prompt-input">
+        输入提示词 <span>（每行一句）</span>
+      </label>
+      <textarea
+        id="prompt-input"
+        placeholder="在这里粘贴或输入提示词，每行一句话。&#10;&#10;例如：&#10;大家好，我是主持人小明。&#10;今天我们来聊聊人工智能的未来。&#10;让我们一起期待美好的明天！"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+      ></textarea>
+      <div class="edit-actions">
+        <button id="save-btn" class="btn btn-primary btn-lg">💾 保存</button>
+        <button id="cancel-edit-btn" class="btn btn-ghost btn-lg" style="flex: 0 0 auto; padding-left: 20px; padding-right: 20px;">取消</button>
+      </div>
+    </section>
+
+    <!-- ===== 阅读面板 ===== -->
+    <section id="read-panel" aria-label="阅读区">
+
+      <!-- 进度条 -->
+      <div class="progress-bar-container" aria-label="阅读进度">
+        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+        <span id="progress-text" class="progress-text">0 / 0</span>
+      </div>
+
+      <!-- 当前句子卡片 -->
+      <div id="current-line-card" class="current-line-card">
+
+        <!-- 空状态提示 -->
+        <div id="empty-hint">
+          <span class="empty-icon">📝</span>
+          <p>点击右上角 ✏️ 编辑按钮<br>粘贴或输入提示词开始使用</p>
+        </div>
+
+        <!-- 完成状态 -->
+        <div id="done-hint" style="display:none;">
+          <span class="done-icon">🎉</span>
+          <p>全部朗读完毕！</p>
+        </div>
+
+        <!-- 当前句子文字 -->
+        <p id="current-line-text" style="display:none;" aria-live="polite" aria-atomic="true"></p>
+
+        <!-- 语音识别状态指示器（监听时显示） -->
+        <div id="speech-status" class="speech-status" style="display:none;" aria-hidden="true">
+          <span class="speech-dot"></span>
+          <span>识别中</span>
+        </div>
+      </div>
+
+      <!-- 通知/错误提示条 -->
+      <div id="notification-bar" role="alert">
+        <span class="notif-icon">⚠️</span>
+        <span id="notif-msg"></span>
+        <button id="notif-close" class="btn btn-ghost" style="margin-left:auto; padding: 4px 10px; font-size: 0.85rem;" aria-label="关闭提示">✕</button>
+      </div>
+
+      <!-- 底部控制区 -->
+      <div class="controls">
+
+        <!-- 主操作按钮 -->
+        <div class="main-controls">
+          <button id="next-btn" class="btn btn-success btn-lg" disabled>
+            ✅ 我读完了
+          </button>
+          <button id="reset-btn" class="btn btn-ghost btn-lg" style="flex: 0 0 auto; padding-left: 20px; padding-right: 20px;" aria-label="重置到第一句">
+            🔄 重置
+          </button>
+        </div>
+
+        <!-- 自动模式开关（浏览器不支持语音时此行会被JS隐藏） -->
+        <div id="auto-row" class="auto-controls">
+          <div class="auto-controls-label">
+            <strong>🎙️ 自动模式</strong>
+            语音识别停顿后自动翻页
+          </div>
+          <label class="toggle" title="开启/关闭自动模式">
+            <input type="checkbox" id="auto-toggle" role="switch" aria-label="自动模式开关" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+      </div><!-- /controls -->
+
+    </section><!-- /read-panel -->
+
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
