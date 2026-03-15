@@ -1,0 +1,540 @@
+/* ========================================
+   逐句提示词阅读器 - 主样式
+   适配手机屏幕，大字体，易操作
+   ======================================== */
+
+/* 基础重置与全局字体 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #0f3460;
+  --accent: #4a90e2;
+  --accent-hover: #357abd;
+  --accent-success: #27ae60;
+  --accent-success-hover: #1e8449;
+  --accent-danger: #e74c3c;
+  --accent-danger-hover: #c0392b;
+  --accent-warning: #f39c12;
+  --text-primary: #e8e8f0;
+  --text-secondary: #a0a8c0;
+  --text-dim: #6b7280;
+  --border: #2a3a6a;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+               'Microsoft YaHei', 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ----------------------------------------
+   顶部导航栏
+   ---------------------------------------- */
+.app-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ----------------------------------------
+   主内容区域
+   ---------------------------------------- */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* ----------------------------------------
+   编辑面板（输入提示词）
+   ---------------------------------------- */
+#edit-panel {
+  padding: 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: none; /* 默认隐藏，通过JS控制 */
+  flex-direction: column;
+  gap: 12px;
+}
+
+#edit-panel.visible {
+  display: flex;
+}
+
+.edit-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.edit-label span {
+  color: var(--accent);
+}
+
+#prompt-input {
+  width: 100%;
+  min-height: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.6;
+  padding: 12px;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+#prompt-input:focus {
+  border-color: var(--accent);
+}
+
+#prompt-input::placeholder {
+  color: var(--text-dim);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ----------------------------------------
+   阅读面板（主显示区）
+   ---------------------------------------- */
+#read-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+/* 进度条 */
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-card);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 50px;
+  text-align: right;
+}
+
+/* 当前句子显示卡片 */
+.current-line-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  transition: box-shadow 0.3s;
+}
+
+/* 语音识别激活时发光效果 */
+.current-line-card.listening {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 20px rgba(74, 144, 226, 0.25);
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 0 2px var(--accent), 0 0 20px rgba(74, 144, 226, 0.25); }
+  50%       { box-shadow: 0 0 0 3px var(--accent), 0 0 32px rgba(74, 144, 226, 0.45); }
+}
+
+#current-line-text {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* 空状态提示 */
+#empty-hint {
+  text-align: center;
+  color: var(--text-dim);
+}
+
+#empty-hint .empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+#empty-hint p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* 完成状态 */
+#done-hint {
+  text-align: center;
+}
+
+#done-hint .done-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+#done-hint p {
+  font-size: 1.1rem;
+  color: var(--accent-success);
+  font-weight: 600;
+}
+
+/* 语音识别状态指示器 */
+.speech-status {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.speech-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* ----------------------------------------
+   底部操作区
+   ---------------------------------------- */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+/* 主操作按钮行 */
+.main-controls {
+  display: flex;
+  gap: 10px;
+}
+
+/* 自动模式行 */
+.auto-controls {
+  display: flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.auto-controls-label {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.auto-controls-label strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 1px;
+}
+
+/* 通知/错误提示条 */
+#notification-bar {
+  background: var(--accent-danger);
+  color: #fff;
+  font-size: 0.88rem;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  animation: slide-in 0.25s ease;
+}
+
+#notification-bar.visible {
+  display: flex;
+}
+
+#notification-bar.info {
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#notification-bar .notif-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------
+   按钮样式
+   ---------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.18s, transform 0.1s, opacity 0.18s;
+  user-select: none;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 大号按钮（主操作） */
+.btn-lg {
+  flex: 1;
+  padding: 18px 12px;
+  font-size: 1.1rem;
+  border-radius: var(--radius-lg);
+  min-height: 60px;
+}
+
+/* 图标按钮（头部操作） */
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  padding: 0;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.btn-icon:hover, .btn-icon:focus-visible {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+/* 颜色变体 */
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus-visible {
+  background: var(--accent-hover);
+}
+
+.btn-success {
+  background: var(--accent-success);
+  color: #fff;
+}
+.btn-success:hover, .btn-success:focus-visible {
+  background: var(--accent-success-hover);
+}
+
+.btn-danger {
+  background: var(--accent-danger);
+  color: #fff;
+}
+.btn-danger:hover, .btn-danger:focus-visible {
+  background: var(--accent-danger-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover, .btn-ghost:focus-visible {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.btn-outline-success {
+  background: transparent;
+  border: 1.5px solid var(--accent-success);
+  color: var(--accent-success);
+}
+.btn-outline-success:hover, .btn-outline-success:focus-visible {
+  background: var(--accent-success);
+  color: #fff;
+}
+
+/* ----------------------------------------
+   开关控件（Toggle Switch）
+   ---------------------------------------- */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 26px;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s;
+}
+
+.toggle input:checked + .toggle-slider {
+  background: var(--accent);
+}
+
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(22px);
+}
+
+/* ----------------------------------------
+   过渡动画（换句时文字淡入）
+   ---------------------------------------- */
+.fade-in {
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------
+   响应式：稍大屏幕适配（平板竖屏等）
+   ---------------------------------------- */
+@media (min-width: 480px) {
+  #current-line-text {
+    font-size: 2rem;
+  }
+  .btn-lg {
+    font-size: 1.15rem;
+  }
+  .current-line-card {
+    min-height: 240px;
+  }
+}
+
+@media (min-width: 640px) {
+  #read-panel {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px 24px;
+  }
+  #edit-panel {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
